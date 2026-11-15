@@ -4,7 +4,7 @@ import time
 
 st.set_page_config(
     page_title="FIN-SWARM | Autonomous Financial Forensics",
-    page_icon="??",
+    page_icon="🐝",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -16,11 +16,11 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.markdown('<p class="main-header">?? FIN-SWARM Enterprise Forensics Engine</p>', unsafe_allow_html=True)
+st.markdown('<p class="main-header">🐝 FIN-SWARM Enterprise Forensics Engine</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Autonomous Multi-Agent Financial Auditing & US GAAP / Statutory Compliance Swarm</p>', unsafe_allow_html=True)
 st.markdown("---")
 
-st.sidebar.header("??? Audit Configuration")
+st.sidebar.header("🎛️ Audit Configuration")
 fiscal_period = st.sidebar.selectbox("Fiscal Period", ["Q1-2026", "Q2-2026", "Q3-2026", "Q4-2026 (YTD)"])
 audit_scope = st.sidebar.multiselect(
     "Inspection Modules",
@@ -29,7 +29,7 @@ audit_scope = st.sidebar.multiselect(
 )
 confidence_threshold = st.sidebar.slider("Anomaly Confidence Threshold", 0.5, 0.99, 0.85)
 
-tab1, tab2, tab3, tab4 = st.tabs(["?? Live Audit Execution", "?? Agent Swarm Inspector", "?? Anomaly Visualizer", "?? Compliance Report"])
+tab1, tab2, tab3, tab4 = st.tabs(["🚀 Live Audit Execution", "🤖 Agent Swarm Inspector", "📊 Anomaly Visualizer", "📜 Compliance Report"])
 
 with tab1:
     st.subheader("Execute Autonomous Financial Audit")
@@ -37,7 +37,7 @@ with tab1:
     user_query = st.text_area("Natural Language Audit Directive", value=default_query, height=100)
     
     if st.button("Initialize Multi-Agent Swarm", type="primary"):
-        with st.status("?? Swarm executing distributed forensic tasks...", expanded=True) as status:
+        with st.status("🐝 Swarm executing distributed forensic tasks...", expanded=True) as status:
             st.write("Initializing LangGraph Supervisor Node...")
             time.sleep(0.6)
             st.write("Delegating task to **SQL Detective Agent** (Retrieving PostgreSQL ledger records)...")
@@ -56,7 +56,7 @@ with tab1:
         col3.metric("Compliance Score", "98.4%", "Optimal")
         col4.metric("Inference Latency", "340ms", "Optimized")
         
-        st.markdown("### ?? Executive Summary Findings")
+        st.markdown("### 📋 Executive Summary Findings")
         findings_df = pd.DataFrame([
             {"ID": "TXN-9912", "Account": "2010-AP", "Amount": ",500.00", "Risk Level": "High", "Flag Reason": "Unusual split-vendor disbursement pattern"},
             {"ID": "TXN-8821", "Account": "1040-Cash", "Amount": ",400.00", "Risk Level": "Medium", "Flag Reason": "Benford's Law distribution deviation"},
@@ -87,7 +87,7 @@ with tab4:
     st.subheader("Generated US GAAP & Statutory Compliance Report")
     st.markdown("> **Certified Statement:** This audit report was automatically synthesized by FIN-SWARM v2.1 under strict adherence to US GAAP double-entry reconciliation standards.")
     if st.button("Download Signed Audit PDF / Markdown"):
-        st.toast("Report compiled successfully!", icon="?")
+        st.toast("Report compiled successfully!", icon="✅")
 
 st.markdown("---")
-st.markdown("<p style='text-align: center; color: gray;'>� 2026 Mohammad Subhan Pasha. All Rights Reserved.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray;'>Copyright 2026 Mohammad Subhan Pasha. All Rights Reserved.</p>", unsafe_allow_html=True)
