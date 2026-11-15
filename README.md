@@ -1,24 +1,7 @@
-﻿# FIN-SWARM
-### Autonomous Multi-Agent Financial Forensics & Regulatory Compliance Engine
+# FIN-SWARM 🐝🤖
+### Autonomous Financial Forensics & Regulatory Compliance Engine
 
-> One Prompt -> Full Audit. Supervisor Agent -> SQL Detective -> Anomaly Investigator -> Compliance Agent -> Executive Report.
+**FIN-SWARM** is an enterprise-grade multi-agent system designed to automate general ledger audits, statistical fraud detection, and US GAAP compliance validation. Built on a hierarchical LangGraph agent swarm architecture and powered by FastAPI and Scikit-Learn.
 
-**Problem:** Enterprise audits take weeks. Manual ledger checks miss fraud.
-**Solution:** FIN-SWARM audits ledgers autonomously.
-
-### Architecture
-User Query -> Supervisor -> [SQL Detective, Anomaly, Compliance] -> Reporter -> Executive Report
-
-### Features
-- Self-Correcting SQL Agent
-- Benfords Law + Isolation Forest Fraud Detection
-- Read-Only Guardrails - No DELETE / UPDATE / DROP
-- LangGraph Checkpointing
-- Live Streaming via FastAPI
-
-### Tech Stack
-LangGraph | Groq Llama-3-70B | PostgreSQL + pgvector | FastAPI | Docker Compose | Redis
-
-### Quick Start
-docker compose up --build
-POST /audit {"query": "Audit Q3 ledger for anomalous vendor payouts"}
+## 📜 Intellectual Property & Copyright Notice
+**© 2026 Mohammad Subhan Pasha. All Rights Reserved.**

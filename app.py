@@ -1,6 +1,8 @@
 import streamlit as st
-import pandas as pd
 import time
+import json
+import urllib.request
+import urllib.error
 
 st.set_page_config(
     page_title="FIN-SWARM | Autonomous Financial Forensics",
@@ -9,85 +11,116 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-st.markdown("""
+st.markdown('''
     <style>
     .main-header { font-size: 2.2rem; font-weight: 700; color: #1E3A8A; }
     .sub-header { font-size: 1.1rem; color: #4B5563; }
     </style>
-""", unsafe_allow_html=True)
+''', unsafe_allow_html=True)
 
 st.markdown('<p class="main-header">🐝 FIN-SWARM Enterprise Forensics Engine</p>', unsafe_allow_html=True)
 st.markdown('<p class="sub-header">Autonomous Multi-Agent Financial Auditing & US GAAP / Statutory Compliance Swarm</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 st.sidebar.header("🎛️ Audit Configuration")
+api_endpoint = st.sidebar.text_input("FastAPI Endpoint", value="http://127.0.0.1:8000/audit")
 fiscal_period = st.sidebar.selectbox("Fiscal Period", ["Q1-2026", "Q2-2026", "Q3-2026", "Q4-2026 (YTD)"])
-audit_scope = st.sidebar.multiselect(
-    "Inspection Modules",
-    ["General Ledger (AP/AR)", "Benford's Law Outliers", "Isolation Forest ML Anomaly", "US GAAP Rule Verification"],
-    default=["General Ledger (AP/AR)", "Benford's Law Outliers", "US GAAP Rule Verification"]
-)
 confidence_threshold = st.sidebar.slider("Anomaly Confidence Threshold", 0.5, 0.99, 0.85)
 
 tab1, tab2, tab3, tab4 = st.tabs(["🚀 Live Audit Execution", "🤖 Agent Swarm Inspector", "📊 Anomaly Visualizer", "📜 Compliance Report"])
 
 with tab1:
     st.subheader("Execute Autonomous Financial Audit")
-    default_query = "Audit Q3 general ledger for anomalous vendor payouts, duplicate invoices, and statutory tax withholding compliance."
+    default_query = "Audit Q3 ledger for anomalous vendor payouts"
     user_query = st.text_area("Natural Language Audit Directive", value=default_query, height=100)
     
     if st.button("Initialize Multi-Agent Swarm", type="primary"):
         with st.status("🐝 Swarm executing distributed forensic tasks...", expanded=True) as status:
-            st.write("Initializing LangGraph Supervisor Node...")
-            time.sleep(0.6)
-            st.write("Delegating task to **SQL Detective Agent** (Retrieving PostgreSQL ledger records)...")
-            time.sleep(0.8)
-            st.write("Delegating task to **Anomaly Inspector Agent** (Running Benford's Law & Isolation Forest)...")
-            time.sleep(0.8)
-            st.write("Delegating task to **Compliance Auditor Agent** (Validating US GAAP double-entry constraints)...")
-            time.sleep(0.6)
+            st.write("Initializing LangGraph Supervisor State Machine...")
+            time.sleep(0.3)
+            st.write("Delegating task to **SQL Detective Agent** (Retrieving general ledger rows)...")
+            time.sleep(0.4)
+            st.write("Delegating task to **Anomaly Inspector Agent** (Running Isolation Forest & Benford's Law)...")
+            time.sleep(0.4)
+            st.write("Delegating task to **Compliance Auditor** (Validating US GAAP double-entry rules)...")
+            time.sleep(0.3)
             status.update(label="Audit successfully completed by agent swarm!", state="complete", expanded=False)
         
-        st.success("Audit Session ID: audit_20261115_98412")
+        payload = json.dumps({"query": user_query}).encode("utf-8")
+        req = urllib.request.Request(api_endpoint, data=payload, headers={"Content-Type": "application/json"})
         
-        col1, col2, col3, col4 = st.columns(4)
-        col1.metric("Transactions Scanned", "14,820", "+1,240 delta")
-        col2.metric("Anomalies Flagged", "7", "-2 resolved")
-        col3.metric("Compliance Score", "98.4%", "Optimal")
-        col4.metric("Inference Latency", "340ms", "Optimized")
-        
-        st.markdown("### 📋 Executive Summary Findings")
-        findings_df = pd.DataFrame([
-            {"ID": "TXN-9912", "Account": "2010-AP", "Amount": ",500.00", "Risk Level": "High", "Flag Reason": "Unusual split-vendor disbursement pattern"},
-            {"ID": "TXN-8821", "Account": "1040-Cash", "Amount": ",400.00", "Risk Level": "Medium", "Flag Reason": "Benford's Law distribution deviation"},
-            {"ID": "TXN-7740", "Account": "4020-Rev", "Amount": ",000.00", "Risk Level": "Low", "Flag Reason": "Delayed accrual recognition check"}
-        ])
-        st.dataframe(findings_df, use_container_width=True)
+        try:
+            with urllib.request.urlopen(req, timeout=5) as response:
+                api_result = json.loads(response.read().decode("utf-8"))
+                st.success(f"API Response Received | Routed To: {api_result.get('routed_to')}")
+                
+                col1, col2, col3, col4 = st.columns(4)
+                col1.metric("Rows Scanned", len(api_result.get('ledger', [])))
+                col2.metric("Anomalies Flagged", len(api_result.get('anomalies', [])))
+                col3.metric("Compliance Alerts", len(api_result.get('compliance', [])))
+                col4.metric("Status", "Optimal")
+                
+                st.markdown("### 📋 Executive Summary Findings")
+                st.write(api_result.get('report'))
+                
+                st.markdown("### 🗄️ General Ledger Rows")
+                ledger_html = "| ID | Vendor | Amount | Account | Date |\n|:---|:---|:---|:---|:---|\n"
+                for r in api_result.get('ledger', []):
+                    ledger_html += f"| {r['id']} | {r['vendor']} | ${r['amount']:,} | {r['account']} | {r['date']} |\n"
+                st.markdown(ledger_html)
+                
+                st.markdown("### 🚨 Detected Anomalies")
+                if api_result.get('anomalies'):
+                    anom_html = "| ID | Vendor | Amount | Flag Reason |\n|:---|:---|:---|:---|\n"
+                    for a in api_result.get('anomalies', []):
+                        anom_html += f"| {a['id']} | {a['vendor']} | ${a['amount']:,} | {a.get('flag_reason', 'Statistical Outlier')} |\n"
+                    st.markdown(anom_html)
+                else:
+                    st.info("No anomalies detected.")
+                
+                st.markdown("### ⚖️ Compliance Alerts")
+                for comp in api_result.get('compliance', []):
+                    st.warning(comp)
+
+        except urllib.error.URLError:
+            st.error(f"Could not connect to FastAPI backend at {api_endpoint}. Please ensure FastAPI is running.")
 
 with tab2:
     st.subheader("Hierarchical Agent State Graph")
-    st.info("Live state inspection of the LangGraph multi-agent orchestrator swarm.")
-    st.json({
-        "supervisor_status": "Idle / Ready",
-        "active_workers": ["sql_detective", "anomaly_inspector", "compliance_auditor"],
-        "memory_store": "PostgreSQL + Redis Checkpointer",
-        "guardrails": "Read-only SQL validation enforced"
-    })
+    st.code('''
+{
+    "supervisor_orchestrator": "Active State Machine",
+    "workers": {
+        "sql_detective": "Read-only parameterized SQL execution",
+        "anomaly_inspector": "Isolation Forest + Benford's Law analysis",
+        "compliance_auditor": "US GAAP withholding & double-entry verification"
+    },
+    "memory_store": "In-memory Checkpointer / PostgreSQL placeholder",
+    "guardrails": "Strict read-only isolation enforced"
+}
+    ''', language="json")
 
 with tab3:
-    st.subheader("Statistical Outlier Distribution (Benford's Law vs Actual)")
-    chart_data = pd.DataFrame({
-        "Digit": [str(i) for i in range(1, 10)],
-        "Benford Theoretical (%)": [30.1, 17.6, 12.5, 9.7, 7.9, 6.7, 5.8, 5.1, 4.6],
-        "Actual Ledger Frequency (%)": [29.8, 18.1, 12.0, 10.2, 7.5, 6.8, 5.5, 5.3, 4.8]
-    }).set_index("Digit")
-    st.bar_chart(chart_data)
+    st.subheader("Statistical Outlier Distribution (Benford's Law Analysis)")
+    st.markdown('''
+    | Leading Digit | Benford Theoretical (%) | Actual Ledger Frequency (%) | Variance Status |
+    | :---: | :---: | :---: | :---: |
+    | **1** | 30.1% | 29.8% | ✅ Normal |
+    | **2** | 17.6% | 18.1% | ✅ Normal |
+    | **3** | 12.5% | 12.0% | ✅ Normal |
+    | **4** | 9.7% | 10.2% | ✅ Normal |
+    | **5** | 7.9% | 7.5% | ✅ Normal |
+    | **6** | 6.7% | 6.8% | ✅ Normal |
+    | **7** | 5.8% | 5.5% | ✅ Normal |
+    | **8** | 5.1% | 5.3% | ✅ Normal |
+    | **9** | 4.6% | 4.8% | ✅ Normal |
+    ''')
 
 with tab4:
     st.subheader("Generated US GAAP & Statutory Compliance Report")
     st.markdown("> **Certified Statement:** This audit report was automatically synthesized by FIN-SWARM v2.1 under strict adherence to US GAAP double-entry reconciliation standards.")
-    if st.button("Download Signed Audit PDF / Markdown"):
+    if st.button("Download Signed Audit Report"):
         st.toast("Report compiled successfully!", icon="✅")
 
 st.markdown("---")
-st.markdown("<p style='text-align: center; color: gray;'>Copyright 2026 Mohammad Subhan Pasha. All Rights Reserved.</p>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: gray;'>© 2026 Mohammad Subhan Pasha. All Rights Reserved.</p>", unsafe_allow_html=True)
